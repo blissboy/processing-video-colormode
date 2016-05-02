@@ -4,7 +4,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.video.Capture;
 
-public class VideoExampleTemplate extends PApplet {
+public class ColorModeVideoExample extends PApplet {
 
     Capture cam;
     PImage camFrame;
@@ -36,7 +36,7 @@ public class VideoExampleTemplate extends PApplet {
 
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"--window-color=#666666", "--stop-color=#cccccc", "com.boyamihungry.processing.VideoExampleTemplate"};
+        String[] appletArgs = new String[]{"--window-color=#666666", "--stop-color=#cccccc", "com.boyamihungry.processing.ColorModeVideoExample"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
