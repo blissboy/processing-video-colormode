@@ -187,7 +187,13 @@ public class ColorModeVideoExample extends PApplet {
     }
 
 
+    public interface GroupSliderGenerator {
+        public void addSlidersToGroup(int width, int height, int rangeLow, int rangeHigh, int vertSpacing, BiConsumer<Group, String[]> sliderCreator);
 
+    // herehere use this
+
+
+    }
 
 
     static public void main(String[] passedArgs) {
