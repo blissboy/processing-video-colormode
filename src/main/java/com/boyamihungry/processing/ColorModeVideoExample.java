@@ -56,7 +56,7 @@ public class ColorModeVideoExample extends PApplet {
 
                     BiConsumer<String, Integer> createSlider =
                             (sliderVar, sliderY) -> {
-                                new Slider(cp5, "rgb_r")
+                                new Slider(cp5, sliderVar)
                                         .setPosition(0,sliderY)
                                         .setRange(0,255)
                                         .setSize(camWidth - margin, sliderHeight)
@@ -93,7 +93,7 @@ public class ColorModeVideoExample extends PApplet {
                 ;
 
         Group cmykGroup = cp5.addGroup("cmykGroup")
-                .setPosition(camWidth + margin, camHeight + margin)
+                .setPosition(2 * (camWidth + margin), camHeight + margin)
                 .setWidth(camWidth - margin)
                 .activateEvent(true)
                 .setBackgroundColor(color(66,80))
@@ -102,60 +102,68 @@ public class ColorModeVideoExample extends PApplet {
                 ;
 
 
-        int yPos = 0;
-        new Slider(cp5, "rgb_r")
-                .setPosition(0,yPos)
-                .setRange(0,255)
-                .setSize(camWidth - margin, sliderHeight)
-                .setGroup(rgbGroup)
-        ;
-        new Slider(cp5, "hsb_h")
-                .setPosition(0,yPos)
-                .setRange(0,360)
-                .setSize(camWidth - margin, sliderHeight)
-                .setGroup(hsbGroup)
-        ;
-        new Slider(cp5, "cmyk_c")
-                .setPosition(0,yPos)
-                .setRange(0,100)
-                .setSize(camWidth - margin, sliderHeight)
-                .setGroup(cmykGroup)
-        ;
+        createSliders.accept(rgbGroup,new String [] {"rgb_r","rgb_g","rgb_b"});
+        createSliders.accept(hsbGroup,new String [] {"hsb_r","hsb_g","hsb_b"});
+        createSliders.accept(cmykGroup,new String [] {"cmyk_c","cmyk_m","cmyk_y", "cmyk_k"});
 
-        yPos += sliderHeight;
-        new Slider(cp5, "rgb_g")
-                .setPosition(0,yPos)
-                .setRange(0,255)
-                .setSize(camWidth - margin, sliderHeight)
-                .setGroup(rgbGroup)
-        ;
-        new Slider(cp5, "hsb_s")
-                .setPosition(0,yPos)
-                .setRange(0,360)
-                .setSize(camWidth - margin, sliderHeight)
-                .setGroup(hsbGroup)
-        ;
-        new Slider(cp5, "cmyk_m")
-                .setPosition(0,yPos)
-                .setRange(0,100)
-                .setSize(camWidth - margin, sliderHeight)
-                .setGroup(cmykGroup)
-        ;
-
-        new Slider(cp5, "RGB-g").setRange(0,255).setPosition(0,yPos).setGroup(rgbGroup);
-        new Slider(cp5, "HSB-s").setRange(0,360).setPosition(camWidth,yPos).setGroup(hsbGroup);
-        new Slider(cp5, "CMYK-m").setRange(0,100).setPosition(2*camWidth,yPos).setGroup(cmykGroup);
-        yPos += sliderHeight;
-        new Slider(cp5, "RGB-b").setRange(0,255).setPosition(0,yPos).setGroup(rgbGroup);
-        new Slider(cp5, "HSB-b").setRange(0,360).setPosition(camWidth,yPos).setGroup(hsbGroup);
-        new Slider(cp5, "CMYK-y").setRange(0,100).setPosition(2*camWidth,yPos).setGroup(cmykGroup);
-        yPos += sliderHeight;
-        new Slider(cp5, "CMYK-k").setRange(0,100).setPosition(2*camWidth,yPos).setGroup(cmykGroup);
-
-        cp5.addGroup(rgbGroup, "RGB");
-        cp5.addGroup(hsbGroup, "HSB");
-        cp5.addGroup(cmykGroup, "CMYK");
-
+//
+//
+//
+//
+//        int yPos = 0;
+//        new Slider(cp5, "rgb_r")
+//                .setPosition(0,yPos)
+//                .setRange(0,255)
+//                .setSize(camWidth - margin, sliderHeight)
+//                .setGroup(rgbGroup)
+//        ;
+//        new Slider(cp5, "hsb_h")
+//                .setPosition(0,yPos)
+//                .setRange(0,360)
+//                .setSize(camWidth - margin, sliderHeight)
+//                .setGroup(hsbGroup)
+//        ;
+//        new Slider(cp5, "cmyk_c")
+//                .setPosition(0,yPos)
+//                .setRange(0,100)
+//                .setSize(camWidth - margin, sliderHeight)
+//                .setGroup(cmykGroup)
+//        ;
+//
+//        yPos += sliderHeight;
+//        new Slider(cp5, "rgb_g")
+//                .setPosition(0,yPos)
+//                .setRange(0,255)
+//                .setSize(camWidth - margin, sliderHeight)
+//                .setGroup(rgbGroup)
+//        ;
+//        new Slider(cp5, "hsb_s")
+//                .setPosition(0,yPos)
+//                .setRange(0,360)
+//                .setSize(camWidth - margin, sliderHeight)
+//                .setGroup(hsbGroup)
+//        ;
+//        new Slider(cp5, "cmyk_m")
+//                .setPosition(0,yPos)
+//                .setRange(0,100)
+//                .setSize(camWidth - margin, sliderHeight)
+//                .setGroup(cmykGroup)
+//        ;
+//
+//        new Slider(cp5, "RGB-g").setRange(0,255).setPosition(0,yPos).setGroup(rgbGroup);
+//        new Slider(cp5, "HSB-s").setRange(0,360).setPosition(camWidth,yPos).setGroup(hsbGroup);
+//        new Slider(cp5, "CMYK-m").setRange(0,100).setPosition(2*camWidth,yPos).setGroup(cmykGroup);
+//        yPos += sliderHeight;
+//        new Slider(cp5, "RGB-b").setRange(0,255).setPosition(0,yPos).setGroup(rgbGroup);
+//        new Slider(cp5, "HSB-b").setRange(0,360).setPosition(camWidth,yPos).setGroup(hsbGroup);
+//        new Slider(cp5, "CMYK-y").setRange(0,100).setPosition(2*camWidth,yPos).setGroup(cmykGroup);
+//        yPos += sliderHeight;
+//        new Slider(cp5, "CMYK-k").setRange(0,100).setPosition(2*camWidth,yPos).setGroup(cmykGroup);
+//
+//        cp5.addGroup(rgbGroup, "RGB");
+//        cp5.addGroup(hsbGroup, "HSB");
+//        cp5.addGroup(cmykGroup, "CMYK");
+//
 
         // img capture
         //camHeight = width / 3;
