@@ -50,30 +50,6 @@ public class ColorModeVideoExample extends PApplet {
         int sliderHeight = 40;
         int margin = 40;
 
-        BiConsumer<Group, String[]> createSliders =
-                (group, variables) -> {
-                    int yPos = 0;
-
-                    BiConsumer<String, Integer> createSlider =
-                            (sliderVar, sliderY) -> {
-                                new Slider(cp5, sliderVar)
-                                        .setPosition(0,sliderY)
-                                        .setRange(0,255)
-                                        .setSize(camWidth - margin, sliderHeight)
-                                        .setGroup(group)
-                                ;
-
-                            };
-
-                    for ( String var : variables) {
-                        createSlider.accept(var, yPos);
-                        yPos += sliderHeight;
-                    }
-
-                };
-
-
-
         Group rgbGroup = cp5.addGroup("rgbGroup")
                 .setPosition(0,camHeight + margin)
                 .setWidth(camWidth - margin)
@@ -101,69 +77,64 @@ public class ColorModeVideoExample extends PApplet {
                 .setLabel("CMYK")
                 ;
 
+        SliderToGroupAdder groupCreator = (sliderMaker, group, initY, sliderVars ) -> {
 
-        createSliders.accept(rgbGroup,new String [] {"rgb_r","rgb_g","rgb_b"});
-        createSliders.accept(hsbGroup,new String [] {"hsb_r","hsb_g","hsb_b"});
-        createSliders.accept(cmykGroup,new String [] {"cmyk_c","cmyk_m","cmyk_y", "cmyk_k"});
+            int yPos = initY;
 
-//
-//
-//
-//
-//        int yPos = 0;
-//        new Slider(cp5, "rgb_r")
-//                .setPosition(0,yPos)
-//                .setRange(0,255)
-//                .setSize(camWidth - margin, sliderHeight)
-//                .setGroup(rgbGroup)
-//        ;
-//        new Slider(cp5, "hsb_h")
-//                .setPosition(0,yPos)
-//                .setRange(0,360)
-//                .setSize(camWidth - margin, sliderHeight)
-//                .setGroup(hsbGroup)
-//        ;
-//        new Slider(cp5, "cmyk_c")
-//                .setPosition(0,yPos)
-//                .setRange(0,100)
-//                .setSize(camWidth - margin, sliderHeight)
-//                .setGroup(cmykGroup)
-//        ;
-//
-//        yPos += sliderHeight;
-//        new Slider(cp5, "rgb_g")
-//                .setPosition(0,yPos)
-//                .setRange(0,255)
-//                .setSize(camWidth - margin, sliderHeight)
-//                .setGroup(rgbGroup)
-//        ;
-//        new Slider(cp5, "hsb_s")
-//                .setPosition(0,yPos)
-//                .setRange(0,360)
-//                .setSize(camWidth - margin, sliderHeight)
-//                .setGroup(hsbGroup)
-//        ;
-//        new Slider(cp5, "cmyk_m")
-//                .setPosition(0,yPos)
-//                .setRange(0,100)
-//                .setSize(camWidth - margin, sliderHeight)
-//                .setGroup(cmykGroup)
-//        ;
-//
-//        new Slider(cp5, "RGB-g").setRange(0,255).setPosition(0,yPos).setGroup(rgbGroup);
-//        new Slider(cp5, "HSB-s").setRange(0,360).setPosition(camWidth,yPos).setGroup(hsbGroup);
-//        new Slider(cp5, "CMYK-m").setRange(0,100).setPosition(2*camWidth,yPos).setGroup(cmykGroup);
-//        yPos += sliderHeight;
-//        new Slider(cp5, "RGB-b").setRange(0,255).setPosition(0,yPos).setGroup(rgbGroup);
-//        new Slider(cp5, "HSB-b").setRange(0,360).setPosition(camWidth,yPos).setGroup(hsbGroup);
-//        new Slider(cp5, "CMYK-y").setRange(0,100).setPosition(2*camWidth,yPos).setGroup(cmykGroup);
-//        yPos += sliderHeight;
-//        new Slider(cp5, "CMYK-k").setRange(0,100).setPosition(2*camWidth,yPos).setGroup(cmykGroup);
-//
-//        cp5.addGroup(rgbGroup, "RGB");
-//        cp5.addGroup(hsbGroup, "HSB");
-//        cp5.addGroup(cmykGroup, "CMYK");
-//
+            for ( String var : sliderVars) {
+                sliderMaker.createSlider(var, margin,yPos, camWidth - margin, sliderHeight, group);
+                yPos += sliderHeight;
+            }
+        };
+
+
+        groupCreator.addSlidersToGroup(
+                (sliderVar, xPos, yPos, w, h, group) -> {
+                    new Slider(cp5, sliderVar)
+                            .setPosition(xPos,yPos)
+                            .setRange(0,255)
+                            .setSize(w,h)
+                            .setGroup(group);},
+                rgbGroup,
+                0,
+                new String[] {"rgb-r","rgb_g","rgb_b"});
+
+        groupCreator.addSlidersToGroup(
+                (sliderVar, xPos, yPos, w, h, group) -> {
+                    new Slider(cp5, sliderVar)
+                            .setPosition(xPos,yPos)
+                            .setRange(0,360)
+                            .setSize(w,h)
+                            .setGroup(group);},
+                hsbGroup,
+                0,
+                new String[] {"hsb_h"});
+
+        groupCreator.addSlidersToGroup(
+                (sliderVar, xPos, yPos, w, h, group) -> {
+                    new Slider(cp5, sliderVar)
+                            .setPosition(xPos,yPos)
+                            .setRange(0,100)
+                            .setSize(w,h)
+                            .setGroup(group);
+                },
+                hsbGroup,
+                sliderHeight,
+                new String[] {"hsb_s","hsb_b"});
+
+        groupCreator.addSlidersToGroup(
+                (sliderVar, xPos, yPos, w, h, group) -> {
+                    new Slider(cp5, sliderVar)
+                            .setPosition(xPos,yPos)
+                            .setRange(0,100)
+                            .setSize(w,h)
+                            .setGroup(group);
+                },
+                cmykGroup,
+                0,
+                new String[] {"cmyk_c","cmyk_m","cmyk_y", "cmyk_k"});
+
+
 
         // img capture
         //camHeight = width / 3;
@@ -187,14 +158,15 @@ public class ColorModeVideoExample extends PApplet {
     }
 
 
-    public interface GroupSliderGenerator {
-        public void addSlidersToGroup(int width, int height, int rangeLow, int rangeHigh, int vertSpacing, BiConsumer<Group, String[]> sliderCreator);
-
-    // herehere use this
-
-
+    @FunctionalInterface
+    public interface SliderCreator {
+        public void createSlider(String sliderVar, int xPos, int yPos, int width, int height, Group group);
     }
 
+    @FunctionalInterface
+    public interface SliderToGroupAdder {
+        public void addSlidersToGroup(SliderCreator sliderCreator, Group group, int startAtY, String[] sliderVars );
+    }
 
     static public void main(String[] passedArgs) {
         String[] appletArgs = new String[]{"--window-color=#666666", "--stop-color=#cccccc", "com.boyamihungry.processing.ColorModeVideoExample"};
