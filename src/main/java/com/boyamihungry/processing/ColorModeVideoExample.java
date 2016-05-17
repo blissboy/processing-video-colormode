@@ -1,5 +1,6 @@
 package com.boyamihungry.processing;
 
+import controlP5.ControlEvent;
 import controlP5.ControlGroup;
 import controlP5.ControlP5;
 import controlP5.Group;
@@ -8,7 +9,6 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.video.Capture;
 
-import java.util.function.BiConsumer;
 
 public class ColorModeVideoExample extends PApplet {
 
@@ -22,6 +22,8 @@ public class ColorModeVideoExample extends PApplet {
     int rgb_r = 9;
 
     public static final int SLIDER_HEIGHT=40;
+    public static final int WIDTH = 1200;
+    public static final int HEIGHT = 800;
 
 
 
@@ -35,45 +37,49 @@ public class ColorModeVideoExample extends PApplet {
 
     public void setup() {
 
+        System.out.println("just making sure");
+
         this.frameRate(30f);
 
         PApplet app = (PApplet)this;
 
-        camWidth = width / 3;
-        camHeight = height / 3;
+        camWidth = (int)(width / 3);
+        camHeight = (int)(height / 3);
 
 
         // set up contol panel
         cp5 = new ControlP5(this);
         cp5.setAutoDraw(false);
 
-        int sliderHeight = 40;
         int margin = 40;
 
         Group rgbGroup = cp5.addGroup("rgbGroup")
                 .setPosition(0,camHeight + margin)
-                .setWidth(camWidth - margin)
+                .setWidth(camWidth-margin)
+                //.setHeight((SLIDER_HEIGHT + margin) * 3 + ( 2 * margin) )
                 .activateEvent(true)
-                .setBackgroundColor(color(44,80))
-                .setBackgroundHeight(100)
+                .setBackgroundColor(color(0,100))
+                .setBackgroundHeight(SLIDER_HEIGHT * 3 + ( 3 * margin) )
                 .setLabel("RGB")
                 ;
 
         Group hsbGroup = cp5.addGroup("hsbGroup")
                 .setPosition(camWidth + margin, camHeight + margin)
-                .setWidth(camWidth - margin)
+                .setWidth(camWidth-margin)
+                //.setHeight((SLIDER_HEIGHT + margin) * 3 + ( 2 * margin) )
                 .activateEvent(true)
                 .setBackgroundColor(color(66,80))
-                .setBackgroundHeight(100)
+                .setBackgroundHeight((SLIDER_HEIGHT + margin) * 3 + ( 2 * margin) )
                 .setLabel("HSB")
                 ;
 
         Group cmykGroup = cp5.addGroup("cmykGroup")
                 .setPosition(2 * (camWidth + margin), camHeight + margin)
-                .setWidth(camWidth - margin)
+                .setWidth(camWidth-margin)
+                //.setHeight((SLIDER_HEIGHT + margin) * 4 + ( 2 * margin) )
                 .activateEvent(true)
                 .setBackgroundColor(color(66,80))
-                .setBackgroundHeight(100)
+                .setBackgroundHeight((SLIDER_HEIGHT + margin) * 4 + ( 2 * margin) )
                 .setLabel("CMYK")
                 ;
 
@@ -82,58 +88,71 @@ public class ColorModeVideoExample extends PApplet {
             int yPos = initY;
 
             for ( String var : sliderVars) {
-                sliderMaker.createSlider(var, margin,yPos, camWidth - margin, sliderHeight, group);
-                yPos += sliderHeight;
+                sliderMaker.createSlider(var, margin/2, yPos, camWidth - (2 * margin), SLIDER_HEIGHT, group);
+                yPos += SLIDER_HEIGHT + margin;
             }
         };
 
+//
+//        groupCreator.addSlidersToGroup(
+//                (sliderVar, xPos, yPos, w, h, group) -> {
+//                    new Slider(cp5, sliderVar)
+//                            .setPosition(xPos,yPos)
+//                            .setRange(0,255)
+//                            .setSize(w,h)
+//                            .setGroup(group);
+//                    cp5.getController(sliderVar).getValueLabel().align(ControlP5.LEFT, ControlP5.BOTTOM_OUTSIDE).setPaddingX(0);
+//                    cp5.getController(sliderVar).getCaptionLabel().align(ControlP5.RIGHT, ControlP5.BOTTOM_OUTSIDE).setPaddingX(0);
+//                },
+//                rgbGroup,
+//                0,
+//                new String[] {"rgb-r","rgb_g","rgb_b"});
+//
+//        groupCreator.addSlidersToGroup(
+//                (sliderVar, xPos, yPos, w, h, group) -> {
+//                    new Slider(cp5, sliderVar)
+//                            .setPosition(xPos,yPos)
+//                            .setRange(0,360)
+//                            .setSize(w,h)
+//                            .setGroup(group);
+//                    cp5.getController(sliderVar).getValueLabel().align(ControlP5.LEFT, ControlP5.BOTTOM_OUTSIDE).setPaddingX(0);
+//                    cp5.getController(sliderVar).getCaptionLabel().align(ControlP5.RIGHT, ControlP5.BOTTOM_OUTSIDE).setPaddingX(0);
+//                },
+//                hsbGroup,
+//                0,
+//                new String[] {"hsb_h"});
+//
+//        groupCreator.addSlidersToGroup(
+//                (sliderVar, xPos, yPos, w, h, group) -> {
+//                    new Slider(cp5, sliderVar)
+//                            .setPosition(xPos,yPos)
+//                            .setRange(0,100)
+//                            .setSize(w,h)
+//                            .setGroup(group);
+//                    cp5.getController(sliderVar).getValueLabel().align(ControlP5.LEFT, ControlP5.BOTTOM_OUTSIDE).setPaddingX(0);
+//                    cp5.getController(sliderVar).getCaptionLabel().align(ControlP5.RIGHT, ControlP5.BOTTOM_OUTSIDE).setPaddingX(0);
+//                },
+//                hsbGroup,
+//                SLIDER_HEIGHT + margin,
+//                new String[] {"hsb_s","hsb_b"});
+//
+//        groupCreator.addSlidersToGroup(
+//                (sliderVar, xPos, yPos, w, h, group) -> {
+//                    new Slider(cp5, sliderVar)
+//                            .setPosition(xPos,yPos)
+//                            .setRange(0,100)
+//                            .setSize(w,h)
+//                            .setGroup(group);
+//                },
+//                cmykGroup,
+//                0,
+//                new String[] {"cmyk_c","cmyk_m","cmyk_y", "cmyk_k"});
 
-        groupCreator.addSlidersToGroup(
-                (sliderVar, xPos, yPos, w, h, group) -> {
-                    new Slider(cp5, sliderVar)
-                            .setPosition(xPos,yPos)
-                            .setRange(0,255)
-                            .setSize(w,h)
-                            .setGroup(group);},
-                rgbGroup,
-                0,
-                new String[] {"rgb-r","rgb_g","rgb_b"});
 
-        groupCreator.addSlidersToGroup(
-                (sliderVar, xPos, yPos, w, h, group) -> {
-                    new Slider(cp5, sliderVar)
-                            .setPosition(xPos,yPos)
-                            .setRange(0,360)
-                            .setSize(w,h)
-                            .setGroup(group);},
-                hsbGroup,
-                0,
-                new String[] {"hsb_h"});
-
-        groupCreator.addSlidersToGroup(
-                (sliderVar, xPos, yPos, w, h, group) -> {
-                    new Slider(cp5, sliderVar)
-                            .setPosition(xPos,yPos)
-                            .setRange(0,100)
-                            .setSize(w,h)
-                            .setGroup(group);
-                },
-                hsbGroup,
-                sliderHeight,
-                new String[] {"hsb_s","hsb_b"});
-
-        groupCreator.addSlidersToGroup(
-                (sliderVar, xPos, yPos, w, h, group) -> {
-                    new Slider(cp5, sliderVar)
-                            .setPosition(xPos,yPos)
-                            .setRange(0,100)
-                            .setSize(w,h)
-                            .setGroup(group);
-                },
-                cmykGroup,
-                0,
-                new String[] {"cmyk_c","cmyk_m","cmyk_y", "cmyk_k"});
-
+        // create a slider
+        // parameters:
+        // name, minValue, maxValue, defaultValue, x, y, width, height
+        cp5.addSlider("sliderA", 100, 200, 100, 100, camHeight + 400, 100, 14);
 
 
         // img capture
@@ -143,6 +162,7 @@ public class ColorModeVideoExample extends PApplet {
     }
 
     public void draw() {
+        background(0);
         if ( cam.available() ) {
             cam.read();
             cam.loadPixels();
@@ -154,9 +174,8 @@ public class ColorModeVideoExample extends PApplet {
     }
 
     public void settings() {
-        size(1920,1440);
+        size(WIDTH,HEIGHT);
     }
-
 
     @FunctionalInterface
     public interface SliderCreator {
@@ -167,6 +186,22 @@ public class ColorModeVideoExample extends PApplet {
     public interface SliderToGroupAdder {
         public void addSlidersToGroup(SliderCreator sliderCreator, Group group, int startAtY, String[] sliderVars );
     }
+
+    public void rgb_r(int pow) {
+        rgb_r = (int)pow;
+        System.out.println(pow);
+    }
+
+    public void rgbGroup(float pow) {
+        rgb_r = (int)pow;
+        System.out.println(pow);
+    }
+
+    void sliderA(float pow) {
+        rgb_r = (int)pow;
+        System.out.println("asdf" + pow);
+    }
+
 
     static public void main(String[] passedArgs) {
         String[] appletArgs = new String[]{"--window-color=#666666", "--stop-color=#cccccc", "com.boyamihungry.processing.ColorModeVideoExample"};
